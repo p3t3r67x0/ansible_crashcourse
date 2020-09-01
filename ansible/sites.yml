@@ -10,4 +10,22 @@
   roles:
     - system
     - user
+
+
+- hosts: dbserver
+  user: ubuntu
+
+  roles:
     - mariadb
+
+
+- hosts: webserver
+  user: ubuntu
+
+  vars:
+    domain_webapp: app.ansible.livestream.red
+    domain_backend: api.ansible.livestream.red
+    letsencrypt_email: hello@livestream.red
+
+  roles:
+    - nginx

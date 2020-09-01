@@ -1,1 +1,8 @@
-157.245.77.213 ansible_user=root
+[webserver]
+188.166.69.123 ansible_user=root
+
+[appserver]
+157.245.67.108 ansible_user=root
+
+[dbserver]
+157.245.67.216 ansible_user=root
