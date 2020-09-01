@@ -1,0 +1,20 @@
+---
+
+- name: update all packages to the latest version
+  apt:
+    update_cache: yes
+    force_apt_get: yes
+
+- name: upgrade all packages to the latest version
+  apt:
+    upgrade: dist
+
+- name: install packages vim, httpie, htop
+  apt:
+    package: vim, httpie, htop
+    state: present
+
+- name: set default system editor
+  alternatives:
+    name: editor
+    path: /usr/bin/vim.tiny

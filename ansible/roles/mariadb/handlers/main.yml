@@ -1,0 +1,6 @@
+---
+
+- name: ensure mariadb was restarted
+  service:
+    name: mariadb
+    state: restarted

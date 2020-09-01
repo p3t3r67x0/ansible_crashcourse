@@ -1,0 +1,120 @@
+---
+
+- name: install mariadb and libmariadbclient-dev
+  apt:
+    package: mariadb-server, mariadb-client, libmariadbclient-dev, python3-pip
+    state: present
+
+- name: ensure pymysql is present
+  pip:
+    name: pymysql
+    state: present
+
+- name: check that the /root/.my.conf exists
+  stat:
+    path: /root/.my.conf
+  register: mariadb_root_config
+
+- name: get current mariadb root password
+  shell: cat /root/.my.conf | grep password | awk -F= '{print $2}'
+  register: mariadb_current_root_password
+  when: mariadb_root_config.stat.exists
+
+- name: output mariadb user password
+  debug:
+    msg: '{{ mariadb_current_root_password.stdout }}'
+  when: mariadb_root_config.stat.exists
+
+- name: create mariadb root password
+  set_fact:
+    mariadb_root_password: "{{ lookup('password', '/dev/null length=22 chars=ascii_letters,digits,hexdigits') }}"
+
+- name: output mariadb root password
+  debug:
+    msg: '{{ mariadb_root_password }}'
+
+- name: create mariadb root user with password
+  mysql_user:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    check_implicit_admin: yes
+    login_user: root
+    login_password: ''
+    user: root
+    password: '{{ mariadb_root_password }}'
+    host: '{{ item }}'
+    priv: '*.*:ALL,GRANT'
+    state: present
+  with_items:
+    - '{{ ansible_fqdn }}'
+    - localhost
+  when: not mariadb_root_config.stat.exists
+
+- name: create mariadb root user with password
+  mysql_user:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: root
+    login_password: '{{ mariadb_current_root_password.stdout }}'
+    user: root
+    password: '{{ mariadb_root_password }}'
+    host: '{{ item }}'
+    priv: '*.*:ALL,GRANT'
+    state: present
+  with_items:
+    - '{{ ansible_fqdn }}'
+    - localhost
+  when: mariadb_root_config.stat.exists
+
+- name: copy new mariadb root password to config
+  template:
+    src: client.my.cnf.j2
+    dest: /root/.my.conf
+
+- name: create mariadb user with password
+  set_fact:
+    mariadb_user_password: "{{ lookup('password', '/dev/null length=22 chars=ascii_letters,digits,hexdigits') }}"
+
+- name: output mariadb user password
+  debug:
+    msg: '{{ mariadb_user_password }}'
+
+- name: create mariadb user with password and privileges
+  mysql_user:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: root
+    login_password: '{{ mariadb_root_password }}'
+    name: awendelk
+    password: '{{ mariadb_user_password }}'
+    host: '{{ item }}'
+    priv: '*.*:ALL'
+    state: present
+  with_items:
+    - '{{ ansible_fqdn }}'
+    - localhost
+
+- name: copy user table on the remote system
+  copy:
+    src: user.sql
+    dest: /tmp
+
+- name: check if mariadb database exists
+  mysql_db:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: awendelk
+    login_password: '{{ mariadb_user_password }}'
+    name: demo
+    state: present
+  register: database_exists
+
+- name: output state of mariadb database demo
+  debug:
+    msg: '{{ database_exists.changed }}, {{ database_exists.failed }}'
+
+- name: create and import user table into demo
+  mysql_db:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: awendelk
+    login_password: '{{ mariadb_user_password }}'
+    target: /tmp/user.sql
+    name: demo
+    state: import
+  when: database_exists.changed or database_exists.failed

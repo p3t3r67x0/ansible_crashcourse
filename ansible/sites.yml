@@ -1,0 +1,13 @@
+---
+
+- hosts: all
+  user: root
+
+  vars:
+    ssh_keys:
+      - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDOwAjzm4cfhCTF6cWWfTc3k8TIJummudt/VRnAqheuLsbcPTgx43KSh+jl/gkS2LlR4yW2dJgQHCO5M9k1PEI67SNnTQCDhY/XZpD8Z1cJ18qxp+XSWGJPVJ+QQq+fmSRwtZ8s56vNENBAnCEfCJ6Y5epdnw+5uaAuZX5AQgrjA3iIguQLP3tr0f0nPB6WGk2B8E9afeKiUI5zV2hNCTlrZ/Mxc2BSraNE3O3dQFNP3mqYPoZ8ver/+nQzHi6uwPzw5lXdcSEXNIn3G4YzV0K8KiBwV456lmSjSieD40wU/9ixHUFPXAccnGy3Xy4Xqz6PQg9DRgSoN0FT3vYhx8zW+URAaEflad2v7waHG/jE14E8Y+MX9O9ma/p4Sbtd2ANlUvIj9UgTPg67mLUiBYT4qdzHCj2mB1v2UmDQH5if9E24qXPRRyOxIGOXcAjuhojRRrxWKpxTKbxmpSc43FHRO+/FnSNygi3NDlqe5pDxyRoUtjbOg98OtdV0RR1Kw/M= awendelk@notebook'
+
+  roles:
+    - system
+    - user
+    - mariadb
