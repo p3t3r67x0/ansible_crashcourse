@@ -1,0 +1,66 @@
+---
+
+- name: download specific nodejs version 14x
+  get_url:
+    force: yes
+    url: https://deb.nodesource.com/setup_14.x
+    dest: /tmp/node_setup.sh
+    mode: '0755'
+
+- name: install specific nodejs version 14x
+  command: bash /tmp/node_setup.sh
+
+- name: ensure dependencies are installed
+  apt:
+    name: nodejs
+    state: latest
+
+- name: clone git repository demo-webapp
+  git:
+    repo: 'https://github.com/p3t3r67x0/ansible_crashcourse.git'
+    dest: /opt/demo-webapp/
+
+- name: change ownership of a demo-webapp
+  file:
+    path: /opt/demo-webapp
+    state: directory
+    recurse: yes
+    owner: ubuntu
+    group: ubuntu
+
+- name: install packages based on package.json
+  become_user: ubuntu
+  npm:
+    path: /opt/demo-webapp
+    state: present
+
+- name: add a enviroment file for webapp
+  template:
+    src: webapp.env
+    dest: /opt/demo-webapp/.env
+    mode: '0644'
+
+- name: build nuxtjs webapp based on package.json
+  command: npm run build
+  args:
+    chdir: /opt/demo-webapp
+
+- name: change ownership of a demo-webapp
+  file:
+    path: /opt/demo-webapp
+    state: directory
+    recurse: yes
+    owner: ubuntu
+    group: ubuntu
+
+- name: add a service systemd file for demo-webapp
+  template:
+    src: webapp.service
+    dest: /etc/systemd/system/demo-webapp.service
+    mode: '0644'
+
+- name: enable and restart service demo-webapp
+  service:
+    name: demo-webapp
+    state: restarted
+    enabled: yes

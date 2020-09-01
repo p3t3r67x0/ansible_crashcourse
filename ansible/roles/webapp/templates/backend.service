@@ -1,0 +1,15 @@
+[Unit]
+Description=Gunicorn instance to serve demo-backend
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/demo-backend
+Environment="PATH=/opt/demo-backend/venv/bin"
+ExecStart=/opt/demo-backend/venv/bin/gunicorn --bind 127.0.0.1:5000 wsgi:app --workers 4 --threads 2 --access-logfile /var/log/demo-backend/access.log --error-logfile /var/log/demo-backend/error.log --log-level INFO
+Restart=on-failure
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target

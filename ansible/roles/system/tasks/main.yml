@@ -9,12 +9,39 @@
   apt:
     upgrade: dist
 
-- name: install packages vim, httpie, htop
+- name: install fail2ban, git, vim, httpie, htop
   apt:
-    package: vim, httpie, htop
+    package: fail2ban, git, vim, httpie, htop
     state: present
 
 - name: set default system editor
   alternatives:
     name: editor
     path: /usr/bin/vim.tiny
+
+- name: disable password authentication
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    state: present
+    backup: yes
+
+- name: disable root login
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+    backup: yes
+
+- name: restart service sshd
+  service:
+    name: sshd
+    state: restarted
+
+- name: ensure service fail2ban is started
+  service:
+    name: fail2ban
+    state: started
+    enabled: yes
