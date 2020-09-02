@@ -1,5 +1,16 @@
 ---
 
+- name: output ubuntu appserver password
+  debug:
+    msg: '{{ ubuntu_appserver_password }}'
+
+- user:
+    name: ubuntu
+    password: "{{ ubuntu_appserver_password | password_hash('sha512', 'LJH32sk2') }}"
+    shell: /bin/bash
+    groups: sudo
+    append: yes
+
 - name: download specific nodejs version 14x
   get_url:
     force: yes
@@ -62,5 +73,63 @@
 - name: enable and restart service demo-webapp
   service:
     name: demo-webapp
+    state: restarted
+    enabled: yes
+
+- name: ensure application dependencies are installed
+  apt:
+    name: virtualenv, python3.8, python3.8-dev
+    state: present
+
+- name: add config.json to demo-backend
+  template:
+    src: config.json
+    dest: /opt/demo-backend/config.json
+    mode: '0644'
+
+- name: install wsgi webserver gunicorn with pip
+  pip:
+    name: gunicorn
+    virtualenv: /opt/demo-backend/venv
+
+- name: install python3 dependencies with pip
+  pip:
+    requirements: /opt/demo-backend/requirements.txt
+    virtualenv: /opt/demo-backend/venv
+
+- name: change ownership of a demo-backend
+  file:
+    path: /opt/demo-backend
+    state: directory
+    recurse: yes
+    owner: ubuntu
+    group: ubuntu
+
+- name: add a service systemd file for demo-backend
+  template:
+    src: backend.service
+    dest: /etc/systemd/system/demo-backend.service
+    mode: '0644'
+
+- name: create log directory if it does not exist
+  file:
+    path: /var/log/demo-backend
+    state: directory
+    mode: '0755'
+
+- name: create demo-backend log files
+  file:
+    path:
+    state: touch
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  with_items:
+    - /var/log/demo-backend/error.log
+    - /var/log/demo-backend/access.log
+
+- name: enable and restart service demo-backend
+  service:
+    name: demo-backend
     state: restarted
     enabled: yes

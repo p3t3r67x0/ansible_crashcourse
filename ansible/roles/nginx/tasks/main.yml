@@ -1,5 +1,15 @@
 ---
 
+- debug:
+    msg: '{{ ubuntu_webserver_password }}'
+
+- user:
+    name: ubuntu
+    password: "{{ ubuntu_webserver_password | password_hash('sha512', 'LJH32sk2') }}"
+    shell: /bin/bash
+    groups: sudo
+    append: yes
+
 - name: install certbot from ppa on ubuntu 18.04
   apt_repository:
     repo: ppa:certbot/certbot

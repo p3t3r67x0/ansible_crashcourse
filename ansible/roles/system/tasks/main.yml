@@ -27,14 +27,6 @@
     state: present
     backup: yes
 
-- name: disable root login
-  lineinfile:
-    dest: /etc/ssh/sshd_config
-    regexp: '^PermitRootLogin'
-    line: 'PermitRootLogin no'
-    state: present
-    backup: yes
-
 - name: restart service sshd
   service:
     name: sshd

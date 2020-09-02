@@ -1,5 +1,15 @@
 ---
 
+- debug:
+    msg: '{{ ubuntu_dbserver_password }}'
+
+- user:
+    name: ubuntu
+    password: "{{ ubuntu_dbserver_password | password_hash('sha512', 'LJH32sk2') }}"
+    shell: /bin/bash
+    groups: sudo
+    append: yes
+
 - name: install mariadb and libmariadbclient-dev
   apt:
     package: mariadb-server, mariadb-client, libmariadbclient-dev, python3-pip

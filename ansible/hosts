@@ -1,8 +1,8 @@
 [webserver]
-188.166.69.123 ansible_user=root
+188.166.69.123 become_user=root
 
 [appserver]
-157.245.67.108 ansible_user=root
+157.245.67.108 become_user=root
 
 [dbserver]
-157.245.67.216 ansible_user=root
+157.245.67.216 become_user=root
