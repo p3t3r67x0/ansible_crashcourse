@@ -76,24 +76,24 @@
 - name: add config.json to demo-backend
   template:
     src: config.json.j2
-    dest: /opt/demo-backend/backend/config.json
+    dest: /opt/ansible_crashcourse/backend/config.json
     mode: '0644'
 
 - name: install wsgi webserver gunicorn with pip
   pip:
     name: gunicorn
-    virtualenv: /opt/demo-backend/backend/venv
+    virtualenv: /opt/ansible_crashcourse/backend/venv
     state: present
 
 - name: install python3 dependencies with pip
   pip:
-    requirements: /opt/demo-backend/backend/requirements.txt
-    virtualenv: /opt/demo-backend/backend/venv
+    requirements: /opt/ansible_crashcourse/backend/requirements.txt
+    virtualenv: /opt/ansible_crashcourse/backend/venv
     state: latest
 
 - name: change ownership of a demo-backend
   file:
-    path: /opt/demo-backend
+    path: /opt/ansible_crashcourse
     state: directory
     recurse: yes
     owner: ubuntu
