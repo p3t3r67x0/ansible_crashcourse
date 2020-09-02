@@ -42,7 +42,7 @@
 - name: install packages based on package.json
   become_user: ubuntu
   npm:
-    path: /opt/ansible_crashcourse
+    path: /opt/ansible_crashcourse/webapp
     state: present
 
 - name: add a enviroment file for webapp
@@ -76,18 +76,20 @@
 - name: add config.json to demo-backend
   template:
     src: config.json.j2
-    dest: /opt/demo-backend/config.json
+    dest: /opt/demo-backend/backend/config.json
     mode: '0644'
 
 - name: install wsgi webserver gunicorn with pip
   pip:
     name: gunicorn
-    virtualenv: /opt/demo-backend/venv
+    virtualenv: /opt/demo-backend/backend/venv
+    state: present
 
 - name: install python3 dependencies with pip
   pip:
-    requirements: /opt/demo-backend/requirements.txt
-    virtualenv: /opt/demo-backend/venv
+    requirements: /opt/demo-backend/backend/requirements.txt
+    virtualenv: /opt/demo-backend/backend/venv
+    state: latest
 
 - name: change ownership of a demo-backend
   file:
