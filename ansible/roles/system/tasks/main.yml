@@ -9,9 +9,9 @@
   apt:
     upgrade: dist
 
-- name: install fail2ban, git, vim, httpie, htop
+- name: install fail2ban, net-tools, git, vim, httpie, htop
   apt:
-    package: fail2ban, git, vim, httpie, htop
+    package: fail2ban, net-tools, git, vim, httpie, htop
     state: present
 
 - name: set default system editor

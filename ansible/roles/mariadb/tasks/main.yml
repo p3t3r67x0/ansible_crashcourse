@@ -10,9 +10,9 @@
     groups: sudo
     append: yes
 
-- name: install mariadb and libmariadbclient-dev
+- name: install mariadb
   apt:
-    package: mariadb-server, mariadb-client, libmariadbclient-dev, python3-pip
+    package: mariadb-server, mariadb-client, python3-pip
     state: present
 
 - name: ensure pymysql is present

@@ -23,8 +23,8 @@
 
 - name: ensure dependencies are installed
   apt:
-    name: nodejs
-    state: latest
+    name: nodejs, mariadb-client, build-essential, libmariadbclient-dev
+    state: present
 
 - name: clone git repository ansible_crashcourse
   git:
@@ -113,7 +113,7 @@
 
 - name: create demo-backend log files
   file:
-    path:
+    path: '{{ item }}'
     state: touch
     owner: ubuntu
     group: ubuntu
