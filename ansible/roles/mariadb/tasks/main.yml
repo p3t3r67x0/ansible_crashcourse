@@ -79,10 +79,6 @@
     src: client.my.cnf.j2
     dest: /root/.my.conf
 
-- name: create mariadb user with password
-  set_fact:
-    mariadb_user_password: "{{ lookup('password', '/dev/null length=22 chars=ascii_letters,digits,hexdigits') }}"
-
 - name: output mariadb user password
   debug:
     msg: '{{ mariadb_user_password }}'

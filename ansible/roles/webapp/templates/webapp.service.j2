@@ -6,7 +6,7 @@ After=network.target
 User=ubuntu
 Group=ubuntu
 WorkingDirectory=/opt/ansible_crashcourse/webapp
-ExecStart=/usr/bin/node /opt/ansible_crashcourse/webapp/node_modules/.bin/nuxt start --port 3000
+ExecStart=/usr/bin/node /opt/ansible_crashcourse/webapp/node_modules/.bin/nuxt start --hostname {{ appserver_private_address }} --port 3000
 Restart=on-failure
 
 [Install]

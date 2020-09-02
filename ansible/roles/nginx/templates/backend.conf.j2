@@ -19,7 +19,7 @@ server {
   }
 
   location / {
-    proxy_pass http://127.0.0.1:5000;
+    proxy_pass http://{{ appserver_private_address }}:5000;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-Host $http_host;

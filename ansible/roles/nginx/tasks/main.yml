@@ -1,7 +1,7 @@
 ---
 
-- debug:
-    msg: '{{ ubuntu_webserver_password }}'
+- set_fact:
+    appserver_private_address: "{{ hostvars['157.245.67.108'].ansible_eth1.ipv4.address }}"
 
 - user:
     name: ubuntu

@@ -7,12 +7,13 @@ from flask import Flask
 
 
 app = Flask(__name__)
+app.config.from_json('config.json')
 
 config = {
-    'host': '127.0.0.1',
     'port': 3306,
     'user': 'awendelk',
-    'password': 'iSeFFBwiSAgtpBikaLc',
+    'host': app.config['MARIADB_HOST'],
+    'password': app.config['MARIADB_PASSSWORD'],
     'database': 'demo'
 }
 
