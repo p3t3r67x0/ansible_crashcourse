@@ -1,7 +1,7 @@
 ---
 
-- debug:
-    msg: '{{ ubuntu_dbserver_password }}'
+- set_fact:
+    appserver_private_address: "{{ hostvars['157.245.67.108'].ansible_eth1.ipv4.address }}"
 
 - user:
     name: ubuntu
@@ -35,10 +35,6 @@
     msg: '{{ mariadb_current_root_password.stdout }}'
   when: mariadb_root_config.stat.exists
 
-- name: create mariadb root password
-  set_fact:
-    mariadb_root_password: "{{ lookup('password', '/dev/null length=22 chars=ascii_letters,digits,hexdigits') }}"
-
 - name: output mariadb root password
   debug:
     msg: '{{ mariadb_root_password }}'
@@ -55,7 +51,7 @@
     priv: '*.*:ALL,GRANT'
     state: present
   with_items:
-    - '{{ ansible_fqdn }}'
+    - '{{ appserver_private_address }}'
     - localhost
   when: not mariadb_root_config.stat.exists
 
@@ -70,8 +66,7 @@
     priv: '*.*:ALL,GRANT'
     state: present
   with_items:
-    - '{{ ansible_fqdn }}'
-    - localhost
+    - '{{ appserver_private_address }}'
   when: mariadb_root_config.stat.exists
 
 - name: copy new mariadb root password to config
@@ -94,8 +89,7 @@
     priv: '*.*:ALL'
     state: present
   with_items:
-    - '{{ ansible_fqdn }}'
-    - localhost
+    - '{{ appserver_private_address }}'
 
 - name: copy user table on the remote system
   copy:
@@ -124,3 +118,12 @@
     name: demo
     state: import
   when: database_exists.changed or database_exists.failed
+
+- name: change mariadb default host configuration
+  lineinfile:
+    dest: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^bind-address'
+    line: 'bind-address = {{ ansible_eth1.ipv4.address }}'
+    state: present
+    backup: yes
+  notify: ensure mariadb was restarted

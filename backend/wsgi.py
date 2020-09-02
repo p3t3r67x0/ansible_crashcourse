@@ -3,7 +3,7 @@
 import json
 import mariadb
 
-from flask import Flask
+from flask import Flask, jsonify
 
 
 app = Flask(__name__)
@@ -43,7 +43,7 @@ def index():
         json_data.append(dict(zip(row_headers, result)))
 
     # return the results!
-    return json.dumps(json_data)
+    return jsonify(json_data)
 
 
 if __name__ == '__main__':

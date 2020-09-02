@@ -1,14 +1,10 @@
 ---
 
 - set_fact:
+    appserver_private_address: "{{ hostvars['157.245.67.108'].ansible_eth1.ipv4.address }}"
+
+- set_fact:
     dbserver_private_address: "{{ hostvars['157.245.67.216'].ansible_eth1.ipv4.address }}"
-
-- debug:
-    msg: '{{ dbserver_private_address }}'
-
-- name: output ubuntu appserver password
-  debug:
-    msg: '{{ ubuntu_appserver_password }}'
 
 - user:
     name: ubuntu
