@@ -1,0 +1,13 @@
+[Unit]
+Description=Nuxtjs instance to serve demo-webapp
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/ansible_crashcourse/webapp
+ExecStart=/usr/bin/node /opt/ansible_crashcourse/webapp/node_modules/.bin/nuxt start --port 3000
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -26,14 +26,14 @@
     name: nodejs
     state: latest
 
-- name: clone git repository demo-webapp
+- name: clone git repository ansible_crashcourse
   git:
     repo: 'https://github.com/p3t3r67x0/ansible_crashcourse.git'
-    dest: /opt/demo-webapp/
+    dest: /opt/ansible_crashcourse/
 
-- name: change ownership of a demo-webapp
+- name: change ownership of a ansible_crashcourse
   file:
-    path: /opt/demo-webapp
+    path: /opt/ansible_crashcourse
     state: directory
     recurse: yes
     owner: ubuntu
@@ -42,31 +42,23 @@
 - name: install packages based on package.json
   become_user: ubuntu
   npm:
-    path: /opt/demo-webapp
+    path: /opt/ansible_crashcourse
     state: present
 
 - name: add a enviroment file for webapp
   template:
-    src: webapp.env
-    dest: /opt/demo-webapp/.env
+    src: webapp.env.j2
+    dest: /opt/ansible_crashcourse/webapp/.env
     mode: '0644'
 
 - name: build nuxtjs webapp based on package.json
   command: npm run build
   args:
-    chdir: /opt/demo-webapp
-
-- name: change ownership of a demo-webapp
-  file:
-    path: /opt/demo-webapp
-    state: directory
-    recurse: yes
-    owner: ubuntu
-    group: ubuntu
+    chdir: /opt/ansible_crashcourse/webapp
 
 - name: add a service systemd file for demo-webapp
   template:
-    src: webapp.service
+    src: webapp.service.j2
     dest: /etc/systemd/system/demo-webapp.service
     mode: '0644'
 
@@ -83,7 +75,7 @@
 
 - name: add config.json to demo-backend
   template:
-    src: config.json
+    src: config.json.j2
     dest: /opt/demo-backend/config.json
     mode: '0644'
 
@@ -107,7 +99,7 @@
 
 - name: add a service systemd file for demo-backend
   template:
-    src: backend.service
+    src: backend.service.j2
     dest: /etc/systemd/system/demo-backend.service
     mode: '0644'
 
