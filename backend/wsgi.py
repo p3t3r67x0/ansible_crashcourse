@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import json
 import mariadb
 
 from flask import Flask, jsonify
@@ -47,4 +46,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=3000, host='127.0.0.1')
+    app.run(debug=True, port=5000, host='127.0.0.1')
